@@ -1,0 +1,44 @@
+﻿@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Checkout").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-checkout-page");
+    Html.AppendPageCssClassParts("html-order-completed-page");
+}
+
+
+
+<div class="page checkout-page order-completed-page">
+
+    <div class="page-title">
+
+    </div>
+    <div class="page-body checkout-data">
+
+        <div class="section order-completed">
+            <div class="buttons">
+                <input type="button" value="@T("Checkout.ThankYou.Continue")" class="button-1 order-completed-continue-button" onclick="setLocation('@Url.RouteUrl("HomePage")')" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<script>
+    $(function () {
+        var $img = $('td img:first');
+        $img.attr('src', 'https://www.coinpayments.net/' + $img.attr('src'));
+
+        //$('#uniq').attr('onclick', 'ConfirmOrder.save()');
+        var $eml = $('a[href^="mailto:"]');
+        $eml.html('seller@@gravitycash.org');
+        $eml.attr('href', 'mailto:seller@@admin.com');
+
+        var v = $('tbody td:eq(1)').text();
+        //alert(v);
+        if (v == 'Complete') {
+            window.location.href = '/checkout/completed/@Context.Request.Query["orderId"]';
+        }
+    })
+</script>*@

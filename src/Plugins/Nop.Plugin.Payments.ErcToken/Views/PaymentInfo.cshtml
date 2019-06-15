@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "";
+    int i = 0;
+}
+@model List<Nop.Plugin.Payments.ErcToken.Models.PaymentInfoModel>
+@*<table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <label for="paymentmethodValue">Pay by CryptoCurrency</label>
+                <select id="paymentmethodValue" name="paymentmethodValue">
+
+                    <option value="BTC">Bitcoin</option>
+                    <option value="ETH">Ethereum</option>
+                    <option value="BCH">Bitcoin Cash</option>
+                    <option value="LTC">Litecoin</option>
+                    <option value="LTCT">Litecoin TestNet</option>
+                </select>
+            </td>
+        </tr>
+    </table>*@
+<div class="checkout-data">
+    <div class="section payment-method">
+        <ul class="method-list">
+            @foreach (var item in Model)
+            {
+                i++;
+                <li>
+                    <div class="method-name">
+
+                        <div class="payment-logo">
+                            <label for="paymentmethod@(i)">
+                                <img src="@item.ImgUrl" alt="" />
+                            </label>
+                        </div>
+
+                        <div class="payment-details">
+                            <input id="paymentmethod@(i)" type="radio" name="paymentmethodValue" value="@item.Code" checked="" />
+                            <label for="paymentmethod@(i)">@item.CoinName</label>
+
+                            <div class="payment-description">Pay by @item.CoinName</div>
+
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

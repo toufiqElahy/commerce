@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Payment methods",
+  "FriendlyName": "ERC20 Token",
+  "SystemName": "Payments.ErcToken",
+  "Version": "1.40",
+  "SupportedVersions": [ "4.20" ],
+  "Author": "nopCommerce team",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Payments.ErcToken.dll",
+  "Description": "This plugin enables Erc20 Token payments"
+}

@@ -1,0 +1,224 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = null;
+}
+
+<h2>Index</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="~/web3.min.js"></script>
+<script src="~/abi.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
+
+<script src="~/node_modules/ethers/dist/ethers.js"></script>
+
+<script>
+    var coinPriceUSD = 0;
+    $.ajaxSetup({async: false});
+    $.ajax({
+        url: 'https://api.coinmarketcap.com/v1/ticker/ela-coin/',
+        //contentType:'application/x-www-form-urlencoded',
+        //dataType: 'text/html',
+        //complete: function (data) {
+        //    console.log(data);
+        //    alert("status = " + data.status + "descripttion" + data);
+        //},
+        success: function (data) {
+            console.log(data);
+            console.log(data[0].price_usd);
+            coinPriceUSD = data[0].price_usd;
+
+        }
+    });
+
+    var amnt = (1 / coinPriceUSD) * 10;
+    console.log(amnt);
+    async function sendEther(to,value) {
+        let privateKey = "F92307ABD3DFC5EEAA00CF856ED34DBD7C84E1BD01A6A7CB5094E69845F2B298"
+        
+        let wallet = new ethers.Wallet(privateKey, provider1)
+
+        console.log(wallet.address)
+        // "0x7357589f8e367c2C31F51242fB77B350A11830F3"
+
+        // All properties are optional
+        let transaction = {
+            nonce: wallet.getTransactionCount(),//provider1.getTransactionCount(to),//
+            gasLimit: 21000,
+            gasPrice: ethers.utils.bigNumberify("1000000000"),
+
+            to: to,
+            // ... or supports ENS names
+            // to: "ricmoo.firefly.eth",
+
+            value: ethers.utils.parseEther(value),
+            //data: "0x",
+
+            // This ensures the transaction cannot be replayed on different networks
+            chainId: 3
+        }
+
+        //let signPromise = wallet.sign(transaction);
+        let signedTransaction = await wallet.sign(transaction);
+        let provider = ethers.getDefaultProvider('ropsten');
+        return await provider.sendTransaction(signedTransaction);
+
+        //signPromise.then((signedTransaction) => {
+
+        //    console.log(signedTransaction);
+            
+        //    // This can now be sent to the Ethereum network
+        //    let provider = ethers.getDefaultProvider('ropsten');
+        //    return await provider.sendTransaction(signedTransaction);
+        //    //provider.sendTransaction(signedTransaction).then((tx) => {
+
+        //    //    console.log(tx);
+        //    //});
+        //})
+    }
+    window.addEventListener('load', async () => {
+            //Modern dapp browsers...
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+                try {
+                    // Request account access if needed
+                    await ethereum.enable();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            // Legacy dapp browsers...
+            else if (window.web3) {
+                window.web3 = new Web3(web3.currentProvider);
+            }
+            // Non-dapp browsers...
+            else {
+                console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            }
+
+           
+    });
+    var provider1 = new ethers.providers.Web3Provider(web3.currentProvider);
+    var signer = provider1.getSigner();
+    let contract = new ethers.Contract(ContractAddress, abi, signer);//new ethers.Contract(ContractAddress, abi, provider1);
+    $(function () {
+
+        
+
+        //let messageHash = ethers.utils.id("");
+        //let messageHashBytes = ethers.utils.arrayify(messageHash);
+        //let getAddress = '';
+        var val = 0;
+        fnc();
+
+        async function fnc() {
+
+            //let tx = await signer.sendTransaction(tx);
+            let getAddress = await signer.getAddress();
+            console.log(getAddress);
+            val = await contract.balanceOf(getAddress);
+            val = parseInt(val.toString()) / 10 ** 18;
+
+            var ttal = 2;
+            var add = (Math.random() * (0.000000000000000001 - 0.000099999999999999) + 0.000000000000000001);
+            ttal = (ttal + add) * 10 ** 18;
+            console.log(add);
+            console.log(ttal + '=');
+            var hexString = ttal.toString(16);
+            console.log(ttal + '=' + hexString.length);
+
+            hexString = Array(65 - hexString.length).join("0") + hexString;
+            console.log(ttal + '=' + hexString);
+            //$('#totalBlnc').html(val);
+            //$('#fromddr').val(getAddress);
+
+            //}
+            //let wallet = new ethers.Wallet('FE344FEAEA4D8E5169A6D8F25C86681773B8CF69BB920BCC7DF44892F129091C', provider1);
+            //let wallet = new ethers.Wallet(provider1);
+
+        var accounts = [];
+            accounts[0] = '0x45BD27bB68B07FE9541B26955d880b70df34B960';//accounts[0].substr(2) //toooo
+        var userAccount = getAddress;
+        let transaction = {
+            //nonce: provider1.getTransactionCount(getAddress),//wallet.getTransactionCount(),
+            //gasLimit: 40000,
+            //gasPrice: ethers.utils.bigNumberify("1000000000"),
+
+            to: ContractAddress,
+            // ... or supports ENS names
+            // to: "ricmoo.firefly.eth",
+
+            value: '0x00',
+            data: '0xa9059cbb000000000000000000000000' + accounts[0].substr(2) + hexString,//'0000000000000000000000000000000000000000000000001BC16D674EC80000',
+
+            // This ensures the transaction cannot be replayed on different networks
+            chainId: 3//ethers.utils.getNetwork('ropsten').chainId
+        }
+            //let signPromise = await signer.signMessage(transaction);
+            //let provider = ethers.getDefaultProvider('ropsten');
+            let filter = contract.filters.Transfer(null, accounts[0]);
+
+                // Listen for our filtered results
+            contract.on(filter, (from, to, value) => {
+                if (value == ttal) {
+                    alert('success');
+                }
+                    alert(to + '] I received ' + value.toString() + ' tokens from ' + from);
+                });
+            //var esm = await provider1.estimateGas(transaction);
+            //console.log(esm);
+            provider1.getBalance(getAddress).then(async(balance) => {
+
+                // balance is a BigNumber (in wei); format is as a sting (in ether)
+                let etherString = ethers.utils.formatEther(balance);
+                
+                if (parseFloat(etherString) < 0.00004) {
+                    console.log("Sending Ether....! " + ethers.utils.parseEther('0.00004'));
+                    var rslt = await sendEther(getAddress, '0.00004');
+                    console.log(rslt);
+                    /////////////
+                    
+                    provider1.waitForTransaction(rslt.hash).then(async (receipt) => {//rslt.hash
+                        console.log('Transaction Mined: ' + receipt.transactionHash);
+                        console.log(receipt);
+                        console.log("Balance: " + etherString);
+                        var rc = await signer.sendTransaction(transaction);
+                        console.log("Receit: " + rc);
+                    });
+
+                } else {
+                    console.log("Balance: " + etherString);
+                    //var rc = await contract.transfer(getAddress, 20000000000000000);
+                    var rc = await signer.sendTransaction(transaction);
+                    console.log("Receit: " + rc);
+                }
+
+                
+
+            });
+
+            
+        
+        //let signPromise = wallet.sign(transaction);
+
+        //signPromise.then((signedTransaction) => {
+
+        //    console.log(signedTransaction);
+
+
+        //    // This can now be sent to the Ethereum network
+        //    let provider = ethers.getDefaultProvider('ropsten')
+        //    provider.sendTransaction(signedTransaction).then((tx) => {
+
+        //        console.log(tx);
+
+        //    });
+        //})
+
+        
+    }
+
+        })
+
+</script>
+

@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = null;
+}
+
+<h2>Index</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="~/web3.min.js"></script>
+<script src="~/abi.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        charset="utf-8"
+        type="text/javascript">
+</script>
+
+<script>
+    window.addEventListener('load', async () => {
+            //Modern dapp browsers...
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+                try {
+                    // Request account access if needed
+                    await ethereum.enable();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            // Legacy dapp browsers...
+            else if (window.web3) {
+                window.web3 = new Web3(web3.currentProvider);
+            }
+            // Non-dapp browsers...
+            else {
+                console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            }
+
+           
+    });
+
+    $(function () { 
+    var accounts = [];
+    var userAccount='0x45BD27bB68B07FE9541B26955d880b70df34B960';
+
+
+    //Private key for userAccount
+        //const privateKey = Buffer.from('FE344FEAEA4D8E5169A6D8F25C86681773B8CF69BB920BCC7DF44892F129091C', 'hex');
+    //const privateKey = new Buffer('FE344FEAEA4D8E5169A6D8F25C86681773B8CF69BB920BCC7DF44892F129091C', 'hex');
+        let privateKey = new ethereumjs.Buffer.Buffer('FE344FEAEA4D8E5169A6D8F25C86681773B8CF69BB920BCC7DF44892F129091C', 'hex')
+        accounts[0] = '0xA6b70392346bE7fBFC33d2d098529efC2459b62D';//accounts[0].substr(2)
+        //Create transaction
+        const txParams = {
+            nonce: web3.eth.getTransactionCount(userAccount),
+            from: userAccount,
+            gasPrice: '0x6FC23AC00',
+            gasLimit: '0xF93E0',
+            to: ContractAddress,
+            value: '0x00',
+            data: '0xa9059cbb000000000000000000000000' + accounts[0].substr(2) + '0000000000000000000000000000000000000000000000001BC16D674EC80000',
+            // EIP 155 chainId - mainnet: 1, ropsten: 3
+            chainId: 3
+        };
+
+        //Sign transaction with private key
+        var tx = new ethereumjs.Tx(txParams);//new ethereumjs.Tx(txParams)
+        tx.sign(privateKey);
+        var serializedTx = tx.serialize();
+
+        //Estimate transaction fee
+    var estimateValue = web3.toBigNumber('0x6FC23AC00').mul(web3.toBigNumber('0xF93E0'));
+
+        web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function (error, data) {
+            console.log(contract.balanceOf(accounts[0]));
+
+
+        });
+    //web3.eth.sendTransaction({
+    //        from: accounts[0],
+    //        to: userAccount,
+    //        value: estimateValue
+    //    }, function (error, data) {
+
+    //        //Provider broadcast singed transaction to network
+            
+
+    //    });
+
+
+        })
+
+</script>
+<script>
+
+    //console.log('typeof ethereumjs:', (typeof ethereumjs))
+    //console.log('Object.keys(ethereumjs):', Object.keys(ethereumjs))
+    //console.log('typeof ethereumjs.Tx:', (typeof ethereumjs.Tx))
+    //console.log('typeof ethereumjs.RLP:', (typeof ethereumjs.RLP))
+    //console.log('typeof ethereumjs.Util:', (typeof ethereumjs.Util))
+    //console.log('typeof ethereumjs.Buffer:', (typeof ethereumjs.Buffer))
+    //console.log('typeof ethereumjs.Buffer.Buffer:', (typeof ethereumjs.Buffer.Buffer))
+
+    //{
+    //    let privateKey = new ethereumjs.Buffer.Buffer('e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109', 'hex')
+    //    let txParams = {
+    //        nonce: '0x00',
+    //        gasPrice: '0x09184e72a000',
+    //        gasLimit: '0x2710',
+    //        to: '0x0000000000000000000000000000000000000000',
+    //        value: '0x00',
+    //        data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057'
+    //    }
+    //    let tx = new ethereumjs.Tx(txParams)
+    //    tx.sign(privateKey)
+    //    let serializedTx = tx.serialize().toString('hex')
+
+    //    console.log('serializedTx:', serializedTx)
+    //}
+
+</script>
+<script>
+    $(function () {
+        //var ethers = require(['ethers']);
+    })
+
+    //var EthereumTx = require('ethereumjs-tx');
+    //import { EthereumTx } from 'ethereumjs-tx';
+    //const EthereumTx = require('ethereumjs-tx').Transaction
+//const privateKey = Buffer.from(
+//  'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109',
+//  'hex',
+//)
+
+//const txParams = {
+//  nonce: '0x00',
+//  gasPrice: '0x09184e72a000',
+//  gasLimit: '0x2710',
+//  to: '0x0000000000000000000000000000000000000000',
+//  value: '0x00',
+//  data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057',
+//}
+
+//const tx = new EthereumTx(txParams)
+//tx.sign(privateKey)
+//const serializedTx = tx.serialize()
+</script>
+
