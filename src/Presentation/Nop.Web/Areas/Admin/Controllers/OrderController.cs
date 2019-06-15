@@ -764,32 +764,26 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-        public async Task<IActionResult> IpnBack(int orderId)
+        public async Task<bool> IpnBack(int orderId)
         {
-            var forms = Request.Form;
-            var status = Convert.ToInt32(forms["status"]);
 
-            //await SendEmail.SendEmailAsync("toufiqelahy@hotmail.com","post  "+ q+ "   headers   " + h +"   form   "+f);
-            if (status == 2 || status >= 100)
+            try
             {
-                try
-                {
-                    var order = _orderService.GetOrderById(orderId);
+                var order = _orderService.GetOrderById(orderId);
 
-                    _orderProcessingService.MarkOrderAsPaid(order);
-                    LogEditOrder(order.Id);
+                _orderProcessingService.MarkOrderAsPaid(order);
+                LogEditOrder(order.Id);
 
-                    //prepare model
-                    var model = _orderModelFactory.PrepareOrderModel(null, order);
+                //prepare model
+                var model = _orderModelFactory.PrepareOrderModel(null, order);
 
-                    return View(model);
-                }
-                catch (Exception exc)
-                {
-                    throw exc;
-                }
+                return true;
             }
-            return Ok();
+            catch (Exception exc)
+            {
+                throw exc;
+            }
+
         }
 
         [HttpPost, ActionName("Edit")]
@@ -2786,7 +2780,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             if (string.IsNullOrEmpty(message))
                 return ErrorJson(_localizationService.GetResource("Admin.Orders.OrderNotes.Fields.Note.Validation"));
-            
+
             //try to get an order with the specified id
             var order = _orderService.GetOrderById(orderId);
             if (order == null)

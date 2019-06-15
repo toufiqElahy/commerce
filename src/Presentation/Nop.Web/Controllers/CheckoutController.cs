@@ -236,6 +236,7 @@ namespace Nop.Web.Controllers
         }
         public IActionResult Crypto(int orderId)
         {
+            var order = _orderService.GetOrderById(orderId);
             //url= HttpUtility.UrlDecode(url);
 
             //var Webget = new HtmlWeb();
@@ -244,7 +245,7 @@ namespace Nop.Web.Controllers
             //HtmlNode node = doc.QuerySelector("div.page-row.page-row-expanded");
             //ViewBag.html = node.OuterHtml;
 
-            return View();
+            return View(order);
         }
         public virtual IActionResult Completed(int? orderId, string paymentmethodValue = "")
         {
@@ -281,18 +282,18 @@ namespace Nop.Web.Controllers
 
                 ViewBag.OrderId = order.Id;
 
-                var cmd = "create_transaction";
+    //            var cmd = "create_transaction";
 
-                SortedList<string, string> sl = new SortedList<string, string>
-            {
-                //{ "currency", "BTC" },
-                //{ "format", "json" },
-                { "amount", order.OrderTotal.ToString() },//cart.Sum(x=>x.Product.Price).ToString() },
-				{ "currency1", "USD" },
-                 { "currency2", code },
-                {"buyer_email","toufiqelahy@hotmail.com" },
-                {"ipn_url",storeLocation+"Admin/Order/IpnBack?orderId="+order.Id }
-            };
+    //            SortedList<string, string> sl = new SortedList<string, string>
+    //        {
+    //            //{ "currency", "BTC" },
+    //            //{ "format", "json" },
+    //            { "amount", order.OrderTotal.ToString() },//cart.Sum(x=>x.Product.Price).ToString() },
+				//{ "currency1", "USD" },
+    //             { "currency2", code },
+    //            {"buyer_email","toufiqelahy@hotmail.com" },
+    //            {"ipn_url",storeLocation+"Admin/Order/IpnBack?orderId="+order.Id }
+            //};
 
                 //var response = Infrastructure.CoinPayments.CallAPI(cmd, sl);
                 //string url = response["result"]["status_url"];
