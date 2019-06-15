@@ -1,4 +1,4 @@
-﻿@model  Nop.Core.Domain.Orders.Order
+﻿
 
 @{
     Layout = "_ColumnsOne";
@@ -13,23 +13,25 @@
 
 
     <div class="page checkout-page order-completed-page">
-        @if (Model.PaymentStatus == Nop.Core.Domain.Payments.PaymentStatus.Paid)
-        {
-            <div>Payment Done</div>
-        }
-        else
-        {
-    <div class="text-right" id="qrcode"></div>
-    <br />
+        
+        <div id="section">
+            <h2 class="" style="background-color:white;">Pay 0.01 USD amount of ELA Coins to UnLock the Video</h2>
+            <div class="text-right" id="qrcode">
+
+            </div>
+
+            <br />
             <div class="">
-                
+
                 <div>Address: 0x45BD27bB68B07FE9541B26955d880b70df34B960</div>
                 <div>Amount:<div id="amntt">0</div></div>
                 <br />
-                <input type="button" id="metamas" class="button-1 order-completed-continue-button" onClick="this.disabled=true; this.value='Sending…'; " value="Pay Using Metamask" />
+                <input type="button" id="metamas" class="button-1 order-completed-continue-button" value="Pay Using Metamask" onClick="this.disabled=true; this.value='Sending…'; "/>
 
             </div>
-        }
+        </div>
+        <iframe id="iframe_Id" width="670" height="290" class=""
+                src=""></iframe>
         <br />
         @*<div class="page-body checkout-data">
 
@@ -54,21 +56,21 @@
     new QRCode(document.getElementById("qrcode"), "0x45BD27bB68B07FE9541B26955d880b70df34B960");
 </script>
 <script>
-    
+
     var coinPriceUSD = 0;
     var ttal = 0;
     var add = 0;
     $.ajaxSetup({ async: false });
     $.ajax({
         url: 'https://api.coinmarketcap.com/v1/ticker/ela-coin/',
-        
+
         success: function (data) {
             console.log(data);
             console.log(data[0].price_usd);
             coinPriceUSD = data[0].price_usd;
 
 
-            var amnt = (1 / coinPriceUSD) * parseFloat('@Model.OrderTotal');
+            var amnt = (1 / coinPriceUSD) * parseFloat('0.01');
     console.log(amnt);
     ttal = amnt;
      add = (Math.random() * (0.000000000000000001 - 0.000099999999999999) + 0.000000000000000001);
@@ -87,12 +89,9 @@
             contract.on(filter, (from, to, value) => {
                 if (value == ttal) {
                     alert('Payment received: ' + value/10 ** 18 + ' tokens from ' + from);
-                    $.ajax({
-                        url: '/Admin/Order/IpnBack?orderId='+@Model.Id,
-                        success: function (data) {
-                            window.location.href = '/checkout/completed/@Model.Id';
-                        }
-                    });
+                    ////////
+                    $('#iframe_Id').attr('src', 'http://www.youtube.com/embed/HO7mE8Ovju0?rel=0&autoplay=1');
+                    $('#section').hide();
                 }
                 console.log('Payment received: ');
             });
@@ -100,7 +99,7 @@
 
     async function sendEther(to, value) {
         let privateKey = "F92307ABD3DFC5EEAA00CF856ED34DBD7C84E1BD01A6A7CB5094E69845F2B298"
-        
+
         let wallet = new ethers.Wallet(privateKey, provider)
 
         console.log(wallet.address)
@@ -119,13 +118,13 @@
 
         //let signPromise = wallet.sign(transaction);
         let signedTransaction = await wallet.sign(transaction);
-        
+
         return await provider.sendTransaction(signedTransaction);
 
     }
-    
 
-    
+
+
 
     //new ethers.Contract(ContractAddress, abi, provider1);
     $(function () {
@@ -133,7 +132,7 @@
         var val = 0;
 
         $('#metamas').on('click', async function () {
-            
+           
             ///window.addEventListener('load', async () => {
             //Modern dapp browsers...
             if (window.ethereum) {
@@ -166,14 +165,14 @@
         async function fnc() {
             var provider1 = new ethers.providers.Web3Provider(web3.currentProvider);
             var signer = provider1.getSigner();
-            
+
             //let tx = await signer.sendTransaction(tx);
             let getAddress = await signer.getAddress();
             console.log(getAddress);
             val = await contract.balanceOf(getAddress);
             val = parseInt(val.toString()) / 10 ** 18;
 
-            
+
             ttal = ttal * 10 ** 18;
             console.log(add);
             console.log(ttal + '=');
@@ -184,6 +183,7 @@
             console.log(ttal + '=' + hexString);
 
 
+            ;
             var userAccount = getAddress;
             //console.log(await provider1.getTransactionCount(getAddress))
             let transaction = {
@@ -197,7 +197,7 @@
             }
             //let signPromise = await signer.signMessage(transaction);
             //let provider = ethers.getDefaultProvider('ropsten');
-            
+
             //var esm = await provider1.estimateGas(transaction);
             //console.log(esm);
             provider1.getBalance(getAddress).then(async (balance) => {

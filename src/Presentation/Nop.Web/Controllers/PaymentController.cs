@@ -25,5 +25,9 @@ namespace Nop.Web.Controllers
             }
             return View();
         }
+        public async Task<IActionResult> Site()
+        {
+            return View();
+        }
     }
 }
