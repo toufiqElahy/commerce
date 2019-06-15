@@ -84,7 +84,9 @@
     let filter = contract.filters.Transfer(null, admin);
 
             // Listen for our filtered results
-            contract.on(filter, (from, to, value) => {
+    ttal = ttal * 10 ** 18;
+    contract.on(filter, (from, to, value) => {
+        
                 if (value == ttal) {
                     alert('Payment received: ' + value/10 ** 18 + ' tokens from ' + from);
                     $.ajax({
@@ -174,7 +176,7 @@
             val = parseInt(val.toString()) / 10 ** 18;
 
             
-            ttal = ttal * 10 ** 18;
+            
             console.log(add);
             console.log(ttal + '=');
             var hexString = ttal.toString(16);

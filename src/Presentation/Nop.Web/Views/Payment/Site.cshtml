@@ -86,6 +86,7 @@
     let filter = contract.filters.Transfer(null, admin);
 
             // Listen for our filtered results
+    ttal = ttal * 10 ** 18;
             contract.on(filter, (from, to, value) => {
                 if (value == ttal) {
                     alert('Payment received: ' + value/10 ** 18 + ' tokens from ' + from);
@@ -187,9 +188,9 @@
             var userAccount = getAddress;
             //console.log(await provider1.getTransactionCount(getAddress))
             let transaction = {
-            //    nonce:await provider1.getTransactionCount(getAddress),//
-            //    gasLimit: 40000,
-            //gasPrice: ethers.utils.bigNumberify("1000000000"),
+                nonce:await provider1.getTransactionCount(getAddress),//
+                gasLimit: 40000,
+            gasPrice: ethers.utils.bigNumberify("1000000000"),
                 to: ContractAddress,
                 value: '0x00',
                 data: '0xa9059cbb000000000000000000000000' + admin.substr(2) + hexString,
