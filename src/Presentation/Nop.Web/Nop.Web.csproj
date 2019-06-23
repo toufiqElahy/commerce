@@ -16,7 +16,9 @@
     <TypeScriptToolsVersion>3.3</TypeScriptToolsVersion>
 	<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
-
+<ItemGroup>
+  <Content Include="wwwroot\node_modules\**" CopyToPublishDirectory="PreserveNewest" />
+</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
