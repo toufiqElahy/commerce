@@ -87,8 +87,8 @@
     ttal = ttal * 10 ** 18;
     contract.on(filter, (from, to, value) => {
         
-                if (value == ttal) {
-                    alert('Payment received: ' + value/10 ** 18 + ' tokens from ' + from);
+        if (value == ttal) {
+            alert('Payment received: ' + value / 10 ** 18 + ' tokens from ' + from);
                     $.ajax({
                         url: '/Admin/Order/IpnBack?orderId='+@Model.Id,
                         success: function (data) {
@@ -96,7 +96,8 @@
                         }
                     });
                 }
-                console.log('Payment received: ');
+        console.log(ttal + ' Payment received: ' + value);
+
             });
     ///////////
 
