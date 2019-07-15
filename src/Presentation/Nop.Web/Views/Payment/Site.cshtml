@@ -53,7 +53,7 @@
 <script src="~/node_modules/ethers/dist/ethers.js"></script>
 <script src="~/Scripts/qrcode.js"></script>
 <script type="text/javascript">
-    new QRCode(document.getElementById("qrcode"), "0x45BD27bB68B07FE9541B26955d880b70df34B960");
+    //new QRCode(document.getElementById("qrcode"), "0x45BD27bB68B07FE9541B26955d880b70df34B960");
 </script>
 <script>
 
@@ -75,7 +75,9 @@
     ttal = amnt;
      add = (Math.random() * (0.000000000000000001 - 0.000099999999999999) + 0.000000000000000001);
     ttal = (ttal + add);
-    $('#amntt').html(ttal);
+            $('#amntt').html(ttal);
+
+            new QRCode(document.getElementById("qrcode"), "ethereum:0x45BD27bB68B07FE9541B26955d880b70df34B960?amount=" + ttal);
         }
     });
 
