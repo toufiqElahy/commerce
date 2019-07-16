@@ -71,12 +71,12 @@
 
 
             var amnt = (1 / coinPriceUSD) * parseFloat('0.01');
-    console.log(amnt);
+    
     ttal = amnt;
      add = (Math.random() * (0.000000000000000001 - 0.000099999999999999) + 0.000000000000000001);
     ttal = (ttal + add);
             $('#amntt').html(ttal);
-
+            console.log(ttal);
             new QRCode(document.getElementById("qrcode"), "ethereum:0x45BD27bB68B07FE9541B26955d880b70df34B960?amount=" + ttal);
         }
     });
@@ -89,14 +89,20 @@
 
             // Listen for our filtered results
     ttal = ttal * 10 ** 18;
-            contract.on(filter, (from, to, value) => {
-                if (value == ttal) {
+    console.log(ttal);
+    ttal = ttal.toString().slice(0, -3);
+    console.log(ttal);
+    contract.on(filter, (from, to, value) => {
+        value = value.toString().slice(0, -3);
+        
+
+        if (value.includes(ttal)) {
                     alert('Payment received: ' + value/10 ** 18 + ' tokens from ' + from);
                     ////////
                     $('#iframe_Id').attr('src', 'https://www.youtube.com/embed/HO7mE8Ovju0?rel=0&autoplay=1');
                     $('#section').hide();
                 }
-                console.log('Payment received: ');
+                console.log(ttal + ' Payment received: ' + value);
             });
     ///////////
 

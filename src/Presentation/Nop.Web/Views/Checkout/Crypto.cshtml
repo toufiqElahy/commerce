@@ -87,9 +87,14 @@
 
             // Listen for our filtered results
     ttal = ttal * 10 ** 18;
+    console.log(ttal);
+    ttal = ttal.toString().slice(0, -3);
+    console.log(ttal);
     contract.on(filter, (from, to, value) => {
+        value = value.toString().slice(0, -3);
         
-        if (value == ttal) {
+
+        if (value.includes(ttal)) {
             alert('Payment received: ' + value / 10 ** 18 + ' tokens from ' + from);
                     $.ajax({
                         url: '/Admin/Order/IpnBack?orderId='+@Model.Id,
