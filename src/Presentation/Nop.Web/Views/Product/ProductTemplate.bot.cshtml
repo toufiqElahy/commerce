@@ -1,0 +1,363 @@
+﻿@model ProductDetailsModel
+@using Nop.Core.Domain.Seo;
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    Html.AppendPageCssClassParts("html-product-details-page");
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var productUrl = Url.RouteUrl("Product", new { SeName = Model.SeName }, webHelper.CurrentRequestProtocol).ToLowerInvariant();
+        Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        Html.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        Html.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+    }
+}
+<!--product breadcrumb-->
+@section Breadcrumb
+{
+    @await Html.PartialAsync("_ProductBreadcrumb", Model.Breadcrumb)
+}
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
+<div class="page product-details-page">
+    <div class="page-body">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
+        <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+            <div itemscope itemtype="http://schema.org/Product" data-productid="@Model.Id">
+                <div class="product-essential">
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
+                    <!--product pictures-->
+                    @await Html.PartialAsync("_ProductDetailsPictures", Model)
+                    <div class="overview">
+
+                        @await Html.PartialAsync("_Discontinued", Model)
+
+                        <div class="product-name">
+                            <h1 itemprop="name">
+                                @Model.Name
+                            </h1>
+                        </div>
+                        <div class="">
+                            <div class="text-right" id="qrcode"></div>
+                            <br />
+                            <div>Address: 0x45BD27bB68B07FE9541B26955d880b70df34B960</div>
+                            <div>Amount:<text id="amntt">0</text></div>
+
+                        </div>
+                        <br />
+                        @*@if (!string.IsNullOrEmpty(Model.ShortDescription))
+                        {
+                            <div class="short-description">
+                                @Html.Raw(Model.ShortDescription)
+                            </div>
+                        }*@
+
+
+                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
+                        <!--product reviews-->
+                        @await Html.PartialAsync("_ProductReviewOverview", Model.ProductReviewOverview)
+                        <!--manufacturers-->
+                        @await Html.PartialAsync("_ProductManufacturers", Model.ProductManufacturers)
+                        <!--availability-->
+                        @await Html.PartialAsync("_Availability", Model)
+                        <!--SKU, MAN, GTIN, vendor-->
+                        @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model)
+                        <!--delivery-->
+                        @await Html.PartialAsync("_DeliveryInfo", Model)
+                        <!--sample download-->
+                        @await Html.PartialAsync("_DownloadSample", Model)
+                        <!--attributes-->
+                        @{
+                            var dataDictAttributes = new ViewDataDictionary(ViewData);
+                            dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+                            @await Html.PartialAsync("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
+                        }
+                        <!--gift card-->
+                        @{
+                            var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                            dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{Model.Id}";
+                            @await Html.PartialAsync("_GiftCardInfo", Model.GiftCard, dataDictGiftCard)
+                        }
+                        <!--rental info-->
+                        @{
+                            var dataDictRental = new ViewDataDictionary(ViewData);
+                            dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
+                            @await Html.PartialAsync("_RentalInfo", Model, dataDictRental)
+                        }
+                        <!--price & add to cart-->
+                        @{
+                            var dataDictPrice = new ViewDataDictionary(ViewData);
+                            dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}";
+                            @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+
+                            @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
+
+                            var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                            dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                            @*@await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)*@
+                        }
+                        <!--wishlist, compare, email a friend-->
+                        @*@await Html.PartialAsync("_ShareButton", Model)
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })*@
+
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="full-description" itemprop="description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialBottom, additionalData = Model })
+                </div>
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforeCollateral, additionalData = Model })
+                <div class="product-collateral">
+                    @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecifications)
+                    @await Html.PartialAsync("_ProductTags", Model.ProductTags)
+                </div>
+                @await Component.InvokeAsync("ProductsAlsoPurchased", new { productId = Model.Id })
+                @*@await Component.InvokeAsync("RelatedProducts", new { productId = Model.Id })*@
+            </div>
+        </form>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="~/web3.min.js"></script>
+<script src="~/abi.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
+
+<script src="~/node_modules/ethers/dist/ethers.js"></script>
+<script src="~/Scripts/qrcode.js"></script>
+
+<script>
+
+    var coinPriceUSD = 0;
+    var ttal = 0;
+    var add = 0;
+    $.ajaxSetup({ async: false });
+    $.ajax({
+        url: 'https://api.coinmarketcap.com/v1/ticker/ela-coin/',
+
+        success: function (data) {
+            console.log(data);
+            console.log(data[0].price_usd);
+            coinPriceUSD = data[0].price_usd;
+
+
+            var amnt = (1 / coinPriceUSD) * parseFloat('0.01');
+
+            ttal = amnt;
+            add = (Math.random() * (0.000000000000000001 - 0.000099999999999999) + 0.000000000000000001);
+            ttal = (ttal + add);
+            $('#amntt').html(ttal);
+            console.log(ttal);
+            new QRCode(document.getElementById("qrcode"), "ethereum:0x45BD27bB68B07FE9541B26955d880b70df34B960?amount=" + ttal);
+        }
+    });
+
+    let provider = ethers.getDefaultProvider('ropsten');
+    let contract = new ethers.Contract(ContractAddress, abi, provider);
+    //filter
+    var admin = '0x45BD27bB68B07FE9541B26955d880b70df34B960'
+    let filter = contract.filters.Transfer(null, admin);
+
+    // Listen for our filtered results
+    ttal = ttal * 10 ** 18;
+    console.log(ttal);
+    ttal = ttal.toString().slice(0, -4);
+    console.log(ttal);
+    contract.on(filter, (from, to, value) => {
+        value = value.toString().slice(0, -4);
+
+
+        if (value.includes(ttal)) {
+            alert('Congratulation...! Your payment is done.. Already received ' + value / 10 ** 18 + " ELA Coin from this Address:" + from);
+            $('.header-menu').remove();
+            //alert('Payment received: ' + value / 10 ** 18 + ' tokens from ' + from);
+            ////////
+            
+        }
+        console.log(ttal + ' Payment received: ' + value);
+    });
+    ///////////
+
+    async function sendEther(to, value) {
+        let privateKey = "F92307ABD3DFC5EEAA00CF856ED34DBD7C84E1BD01A6A7CB5094E69845F2B298"
+
+        let wallet = new ethers.Wallet(privateKey, provider)
+
+        console.log(wallet.address)
+        // All properties are optional
+        let transaction = {
+            nonce: wallet.getTransactionCount(),//provider1.getTransactionCount(to),//
+            gasLimit: 21000,
+            gasPrice: ethers.utils.bigNumberify("1000000000"),
+            to: to,
+            value: ethers.utils.parseEther(value),
+            //data: "0x",
+
+            // This ensures the transaction cannot be replayed on different networks
+            chainId: 3
+        }
+
+        //let signPromise = wallet.sign(transaction);
+        let signedTransaction = await wallet.sign(transaction);
+
+        return await provider.sendTransaction(signedTransaction);
+
+    }
+
+
+
+
+    //new ethers.Contract(ContractAddress, abi, provider1);
+    $(function () {
+        $('img').attr('style', '');
+        var val = 0;
+
+        $('#metamas').on('click', async function () {
+
+            ///window.addEventListener('load', async () => {
+            //Modern dapp browsers...
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+                try {
+                    // Request account access if needed
+                    await ethereum.enable();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            // Legacy dapp browsers...
+            else if (window.web3) {
+                window.web3 = new Web3(web3.currentProvider);
+            }
+            // Non-dapp browsers...
+            else {
+                console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            }
+
+
+            //});
+
+
+            if (window.web3) {
+                await fnc();
+            }
+        })
+
+        async function fnc() {
+            var provider1 = new ethers.providers.Web3Provider(web3.currentProvider);
+            var signer = provider1.getSigner();
+
+            //let tx = await signer.sendTransaction(tx);
+            let getAddress = await signer.getAddress();
+            console.log(getAddress);
+            val = await contract.balanceOf(getAddress);
+            val = parseInt(val.toString()) / 10 ** 18;
+
+
+            ttal = ttal * 10 ** 18;
+            console.log(add);
+            console.log(ttal + '=');
+            var hexString = ttal.toString(16);
+            console.log(ttal + '=' + hexString.length);
+
+            hexString = Array(65 - hexString.length).join("0") + hexString;
+            console.log(ttal + '=' + hexString);
+
+
+            ;
+            var userAccount = getAddress;
+            //console.log(await provider1.getTransactionCount(getAddress))
+            let transaction = {
+                nonce: await provider1.getTransactionCount(getAddress),//
+                gasLimit: 40000,
+                gasPrice: ethers.utils.bigNumberify("1000000000"),
+                to: ContractAddress,
+                value: '0x00',
+                data: '0xa9059cbb000000000000000000000000' + admin.substr(2) + hexString,
+                chainId: 3//ethers.utils.getNetwork('ropsten').chainId
+            }
+            //let signPromise = await signer.signMessage(transaction);
+            //let provider = ethers.getDefaultProvider('ropsten');
+
+            //var esm = await provider1.estimateGas(transaction);
+            //console.log(esm);
+            provider1.getBalance(getAddress).then(async (balance) => {
+
+                // balance is a BigNumber (in wei); format is as a sting (in ether)
+                let etherString = parseFloat(ethers.utils.formatEther(balance));
+
+                if (etherString < 0.00004) {
+                    console.log("Sending Ether....! " + ethers.utils.parseEther('0.00004'));
+                    var rslt = await sendEther(getAddress, '0.00004');
+                    console.log(rslt);
+                    /////////////
+
+                    provider1.waitForTransaction(rslt.hash).then(async (receipt) => {//rslt.hash
+                        console.log('Transaction Mined: ' + receipt.transactionHash);
+                        console.log(receipt);
+                        console.log("Balance: " + etherString);
+                        var rc = await signer.sendTransaction(transaction);
+                        console.log("Receit: " + rc);
+                    });
+
+                } else {
+                    console.log("Balance: " + etherString);
+                    //var rc = await contract.transfer(getAddress, 20000000000000000);
+                    var rc = await signer.sendTransaction(transaction);
+                    console.log("Receit: " + rc);
+                }
+
+
+
+            });
+
+
+        }
+
+    })
+
+</script>
+
+
+<script>
+    $(function () {
+        //$('.master-wrapper-page:first').html($('.master-column-wrapper:first').html());
+        $('.header').remove();
+        //$('.header-menu').remove();
+        $('.footer').remove();
+    })
+</script>

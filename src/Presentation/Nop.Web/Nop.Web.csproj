@@ -33,8 +33,14 @@
     <Content Update="App_Data\DataProtectionKeys\*.xml" CopyToPublishDirectory="Never" />
 
     <Compile Remove="Plugins\**" />
+
+    <Compile Remove="wwwroot\aiela\**" />
+
+    <Content Remove="wwwroot\aiela\**" />
     <EmbeddedResource Remove="Plugins\**" />
+    <EmbeddedResource Remove="wwwroot\aiela\**" />
     <None Remove="Plugins\**" />
+    <None Remove="wwwroot\aiela\**" />
 
     <!-- We copy the entire \Plugins and \Themes directories.
 	    But we ignore cshtml and JSON files to avoid "Duplicate 'Content' items were included" error during publishing.

@@ -109,7 +109,7 @@ namespace Nop.Web.Controllers
         #region Product details page
 
         [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult ProductDetails(int productId, int updatecartitemid = 0)
+        public virtual IActionResult ProductDetails(int productId, int updatecartitemid = 0,bool isbot=false)
         {
             var product = _productService.GetProductById(productId);
             if (product == null || product.Deleted)
@@ -181,6 +181,10 @@ namespace Nop.Web.Controllers
             var model = _productModelFactory.PrepareProductDetailsModel(product, updatecartitem, false);
             //template
             var productTemplateViewPath = _productModelFactory.PrepareProductTemplateViewPath(product);
+            if (isbot)
+            {
+                productTemplateViewPath = "ProductTemplate.bot";
+            }
 
             return View(productTemplateViewPath, model);
         }
